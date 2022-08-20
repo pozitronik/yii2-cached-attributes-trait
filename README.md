@@ -1,5 +1,6 @@
 # yii2-cached-properties-trait
-Support to cache yii2 models attributes
+
+Support to cache yii2 models properties
 
 ![GitHub Workflow Status](https://img.shields.io/github/workflow/status/pozitronik/yii2-cached-properties-trait/CI%20with%20PostgreSQL)
 
@@ -48,7 +49,10 @@ class DeepThought extends \yii\base\Model {
 }
 
 ```
-Every time, when ```$deepThoughtObject->AnswerToUltimateQuestionOfLifeUniverseAndEverything``` called, we have to wait again. Of course, property value can be saved to a temporary variable after first call, or cached (which is more prefferable, because caching is caching, you know), so next calls will cost nothing.
+
+Every time, when ```$deepThoughtObject->AnswerToUltimateQuestionOfLifeUniverseAndEverything``` called, we have
+to wait again. Of course, property value can be saved to a temporary variable after first call, or cached (
+which is more prefferable, because caching is caching, you know), so next calls will cost nothing.
 
 Usually, add caching support to you code in Yii2 is not so hard. Let's assume something like:
 
@@ -58,9 +62,12 @@ Usually, add caching support to you code in Yii2 is not so hard. Let's assume so
 	 * @return int|null
 	 */
 	public function getAnswerToUltimateQuestionOfLifeUniverseAndEverything():?int {
-		return Yii::$app->cache->getOrSet('DeepThought::AnswerToUltimateQuestionOfLifeUniverseAndEverything', function() {
-			return $this->multiple(6, 9);//42
-		});
+		return Yii::$app->cache->getOrSet(
+			'DeepThought::AnswerToUltimateQuestionOfLifeUniverseAndEverything',
+			function() {
+				return $this->multiple(6, 9);//42
+			}
+		);
 	}
 ```
 
@@ -120,7 +127,8 @@ class DeepThought extends \yii\base\Model {
 ]))->AnswerToUltimateQuestionOfLifeUniverseAndEverything;//???
 ```
 
-You have to watch for right cache invalidations and write a lot of boring code. This trait tries to simplify that task:
+You have to watch for right cache invalidations and write a lot of boring code. This trait tries to simplify
+that task:
 
 ```php
 /**
