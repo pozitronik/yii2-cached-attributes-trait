@@ -21,6 +21,7 @@
 		"yiisoft/yii2": "~2.0.0"
 	},
 	"require-dev": {
+		"pozitronik/yii2-references": "^1.2.0",
 		"phpunit/phpunit": "^9.5",
 		"codeception/codeception": "^4.1",
 		"codeception/module-asserts": "^1.3",
