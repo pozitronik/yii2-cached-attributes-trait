@@ -189,7 +189,7 @@ class DeepThought extends \yii\base\Model {
 }
 ```
 
-So, that's an idea, see test and code examples.
+So, that's an idea, see tests and code examples for more information.
 
 License
 -------
