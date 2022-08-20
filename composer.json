@@ -17,6 +17,7 @@
 	],
 	"require": {
 		"php": ">=8.0",
+		"pozitronik/yii2-helpers": "^1.0.13",
 		"yiisoft/yii2": "^2.0.0"
 	},
 	"require-dev": {
