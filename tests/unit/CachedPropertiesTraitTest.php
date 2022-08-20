@@ -12,7 +12,6 @@ use yii\db\StaleObjectException;
 
 /**
  * Class CachedPropertiesTraitTest
- * @covers CachedPropertyRule::fromRule
  */
 class CachedPropertiesTraitTest extends Unit {
 
