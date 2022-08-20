@@ -6,7 +6,6 @@ declare(strict_types = 1);
 namespace pozitronik\cached_properties;
 
 use pozitronik\helpers\CacheHelper;
-use Psr\SimpleCache\InvalidArgumentException;
 use Throwable;
 use Yii;
 use yii\caching\TagDependency;
@@ -23,6 +22,7 @@ trait CachedPropertiesTrait {
 	 * @throws Throwable
 	 */
 	private function initRules():void {
+		if ([] === $this->cachedProperties()) $this->rules = [];
 		foreach ($this->cachedProperties() as $propertyRule) {
 			$this->rules[] = CachedPropertyRule::fromRule($propertyRule);
 		}
