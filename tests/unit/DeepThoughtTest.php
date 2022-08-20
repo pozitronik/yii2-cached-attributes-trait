@@ -1,11 +1,9 @@
 <?php
 declare(strict_types = 1);
 
-namespace app\models;
-
+use app\models\DeepThought;
 use Codeception\Test\Unit;
 use pozitronik\cached_properties\CachedPropertiesTrait;
-use Yii;
 use yii\caching\FileCache;
 use yii\helpers\Console;
 
