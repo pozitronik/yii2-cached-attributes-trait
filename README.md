@@ -139,6 +139,10 @@ that task:
  */
 class DeepThought extends \yii\base\Model {
 	use CachedPropertiesTrait;
+	
+    private mixed $_alpha = 6;
+	private mixed $_beta = 9;
+	private mixed $_base = 13;
 
 	/**
 	 * @inheritDoc
@@ -149,10 +153,6 @@ class DeepThought extends \yii\base\Model {
 			['AnswerToUltimateQuestionOfLifeUniverseAndEverything', ['alpha', 'beta', 'base']]
 		];
 	}
-
-	private mixed $_alpha = 6;
-	private mixed $_beta = 9;
-	private mixed $_base = 13;
 
 	/**
 	 * Warning: this method execution take ~7.5 million years
