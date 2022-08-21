@@ -24,7 +24,9 @@ trait CachedPropertiesTrait {
 	private function initRules():void {
 		if ([] === $this->cachedProperties()) $this->rules = [];
 		foreach ($this->cachedProperties() as $propertyRule) {
-			$this->rules[] = new CachedPropertyRule($propertyRule);
+			$this->rules[] = is_a($propertyRule, CachedPropertyRule::class)
+				?$propertyRule
+				:new CachedPropertyRule($propertyRule);
 		}
 	}
 

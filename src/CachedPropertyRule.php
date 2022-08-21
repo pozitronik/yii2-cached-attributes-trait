@@ -44,16 +44,16 @@ class CachedPropertyRule extends Component {
 	public function __construct(string|array|bool $cachedAttributeRule) {
 		parent::__construct();
 		if (is_array($cachedAttributeRule)) {
-			if (empty($attributeName = array_filter((array)ArrayHelper::getValue($cachedAttributeRule, 0)))) {
+			if (empty($attributeName = array_filter((array)ArrayHelper::getValue($cachedAttributeRule, 'propertiesNames', ArrayHelper::getValue($cachedAttributeRule, 0))))) {
 				throw new InvalidArgumentException('Wrong rule set passed to constructor.');
 			}
 			$this->_propertiesNames = $attributeName;
-			$this->_setterPropertiesNames = match ($this->_setterPropertiesNames = ArrayHelper::getValue($cachedAttributeRule, 1, [])) {
+			$this->_setterPropertiesNames = match ($this->_setterPropertiesNames = ArrayHelper::getValue($cachedAttributeRule, 'setterPropertiesNames', ArrayHelper::getValue($cachedAttributeRule, 1, []))) {
 				null => $this->_propertiesNames,
 				false => [],
 				default => (array)$this->_setterPropertiesNames
 			};
-			$this->_propertiesTags = (array)ArrayHelper::getValue($cachedAttributeRule, 2, []);
+			$this->_propertiesTags = (array)ArrayHelper::getValue($cachedAttributeRule, 'propertiesTags', ArrayHelper::getValue($cachedAttributeRule, 2, []));
 		} else {
 			$this->_propertiesNames = (array)$cachedAttributeRule;
 			$this->_setterPropertiesNames = (array)$cachedAttributeRule;
