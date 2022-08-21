@@ -6,6 +6,7 @@ namespace pozitronik\cached_properties;
 use pozitronik\helpers\ArrayHelper;
 use Throwable;
 use yii\base\Component;
+use yii\base\InvalidArgumentException;
 
 /**
  * Class CachedAttributeRule
@@ -36,27 +37,27 @@ class CachedPropertyRule extends Component {
 	}
 
 	/**
-	 * Парсит правило кеширования для атрибута
+	 * @inheritDoc
 	 * @param string|array|bool $cachedAttributeRule
-	 * @return static|null Объект правила, null при ошибке/недопустимой конфигурации
 	 * @throws Throwable
 	 */
-	public static function fromRule(string|array|bool $cachedAttributeRule):?static {
-		$rule = new static();
+	public function __construct(string|array|bool $cachedAttributeRule) {
+		parent::__construct();
 		if (is_array($cachedAttributeRule)) {
-			if (empty($attributeName = array_filter((array)ArrayHelper::getValue($cachedAttributeRule, 0)))) return null;
-			$rule->_propertiesNames = $attributeName;
-			$rule->_setterPropertiesNames = match ($rule->_setterPropertiesNames = ArrayHelper::getValue($cachedAttributeRule, 1, [])) {
-				null => $rule->_propertiesNames,
+			if (empty($attributeName = array_filter((array)ArrayHelper::getValue($cachedAttributeRule, 0)))) {
+				throw new InvalidArgumentException('Wrong rule set passed to constructor.');
+			}
+			$this->_propertiesNames = $attributeName;
+			$this->_setterPropertiesNames = match ($this->_setterPropertiesNames = ArrayHelper::getValue($cachedAttributeRule, 1, [])) {
+				null => $this->_propertiesNames,
 				false => [],
-				default => (array)$rule->_setterPropertiesNames
+				default => (array)$this->_setterPropertiesNames
 			};
-			$rule->_propertiesTags = (array)ArrayHelper::getValue($cachedAttributeRule, 2, []);
+			$this->_propertiesTags = (array)ArrayHelper::getValue($cachedAttributeRule, 2, []);
 		} else {
-			$rule->_propertiesNames = (array)$cachedAttributeRule;
-			$rule->_setterPropertiesNames = (array)$cachedAttributeRule;
+			$this->_propertiesNames = (array)$cachedAttributeRule;
+			$this->_setterPropertiesNames = (array)$cachedAttributeRule;
 		}
-		return $rule;
 	}
 
 	/**

@@ -6,6 +6,7 @@ use app\models\Users;
 use Codeception\Test\Unit;
 use pozitronik\cached_properties\CachedPropertiesTrait;
 use pozitronik\cached_properties\CachedPropertyRule;
+use yii\base\InvalidArgumentException;
 use yii\caching\FileCache;
 use yii\caching\TagDependency;
 use yii\db\StaleObjectException;
@@ -30,72 +31,73 @@ class CachedPropertiesTraitTest extends Unit {
 	 * @return void
 	 * @throws ReflectionException
 	 * @throws Throwable
-	 * @covers CachedPropertyRule::fromRule
+	 * @covers CachedPropertyRule::__construct
 	 */
 	public function testCachedAttributeRuleFromArray():void {
-		$rule = CachedPropertyRule::fromRule('attribute_one');
+		$rule = new CachedPropertyRule('attribute_one');
 		self::assertEquals(['attribute_one'], $rule->propertiesNames);
 		self::assertEquals(['attribute_one'], $rule->setterPropertiesNames);
 		self::assertEquals([], $rule->propertiesTags);
 
-		$rule = CachedPropertyRule::fromRule(['attribute_two', 'attribute_setter_two']);
+		$rule = new CachedPropertyRule(['attribute_two', 'attribute_setter_two']);
 		self::assertEquals(['attribute_two'], $rule->propertiesNames);
 		self::assertEquals(['attribute_setter_two'], $rule->setterPropertiesNames);
 		self::assertEquals([], $rule->propertiesTags);
 
-		$rule = CachedPropertyRule::fromRule([['attribute_three', 'attribute_four'], ['attribute_setter_three']]);
+		$rule = new CachedPropertyRule([['attribute_three', 'attribute_four'], ['attribute_setter_three']]);
 		self::assertEquals(['attribute_three', 'attribute_four'], $rule->propertiesNames);
 		self::assertEquals(['attribute_setter_three'], $rule->setterPropertiesNames);
 		self::assertEquals([], $rule->propertiesTags);
 
-		$rule = CachedPropertyRule::fromRule(['attribute_five', ['attribute_setter_four']]);
+		$rule = new CachedPropertyRule(['attribute_five', ['attribute_setter_four']]);
 		self::assertEquals(['attribute_five'], $rule->propertiesNames);
 		self::assertEquals(['attribute_setter_four'], $rule->setterPropertiesNames);
 		self::assertEquals([], $rule->propertiesTags);
 
-		$rule = CachedPropertyRule::fromRule([['attribute_six'], 'attribute_setter_five']);
+		$rule = new CachedPropertyRule([['attribute_six'], 'attribute_setter_five']);
 		self::assertEquals(['attribute_six'], $rule->propertiesNames);
 		self::assertEquals(['attribute_setter_five'], $rule->setterPropertiesNames);
 		self::assertEquals([], $rule->propertiesTags);
 
-		$rule = CachedPropertyRule::fromRule([['attribute_seven', 'attribute_eight'], ['attribute_setter_six', 'attribute_setter_seven', 'attribute_setter_eight']]);
+		$rule = new CachedPropertyRule([['attribute_seven', 'attribute_eight'], ['attribute_setter_six', 'attribute_setter_seven', 'attribute_setter_eight']]);
 		self::assertEquals(['attribute_seven', 'attribute_eight'], $rule->propertiesNames);
 		self::assertEquals(['attribute_setter_six', 'attribute_setter_seven', 'attribute_setter_eight'], $rule->setterPropertiesNames);
 		self::assertEquals([], $rule->propertiesTags);
 
-		$rule = CachedPropertyRule::fromRule([['attribute_nine', 'attribute_ten'], null, ['tag_one', 'tag_two']]);
+		$rule = new CachedPropertyRule([['attribute_nine', 'attribute_ten'], null, ['tag_one', 'tag_two']]);
 		self::assertEquals(['attribute_nine', 'attribute_ten'], $rule->propertiesNames);
 		self::assertEquals(['attribute_nine', 'attribute_ten'], $rule->setterPropertiesNames);
 		self::assertEquals(['tag_one', 'tag_two'], $rule->propertiesTags);
 
-		$rule = CachedPropertyRule::fromRule(['attribute_eleven', true]);
+		$rule = new CachedPropertyRule(['attribute_eleven', true]);
 		self::assertEquals(['attribute_eleven'], $rule->propertiesNames);
 		self::assertEquals([true], $rule->setterPropertiesNames);
 		self::assertEquals([], $rule->propertiesTags);
 
-		$rule = CachedPropertyRule::fromRule(['attribute_twelve', false]);
+		$rule = new CachedPropertyRule(['attribute_twelve', false]);
 		self::assertEquals(['attribute_twelve'], $rule->propertiesNames);
 		self::assertEquals([], $rule->setterPropertiesNames);
 		self::assertEquals([], $rule->propertiesTags);
 
-		$rule = CachedPropertyRule::fromRule(true);
+		$rule = new CachedPropertyRule(true);
 		self::assertEquals([true], $rule->propertiesNames);
 		self::assertEquals([true], $rule->setterPropertiesNames);
 		self::assertEquals([], $rule->propertiesTags);
 
-		$rule = CachedPropertyRule::fromRule([true, false]);
+		$rule = new CachedPropertyRule([true, false]);
 		self::assertEquals([true], $rule->propertiesNames);
 		self::assertEquals([], $rule->setterPropertiesNames);
 		self::assertEquals([], $rule->propertiesTags);
 
-		$rule = CachedPropertyRule::fromRule([true, false, 'tag_three']);
+		$rule = new CachedPropertyRule([true, false, 'tag_three']);
 		self::assertEquals([true], $rule->propertiesNames);
 		self::assertEquals([], $rule->setterPropertiesNames);
 		self::assertEquals(['tag_three'], $rule->propertiesTags);
 
-		self::assertNull(CachedPropertyRule::fromRule([null]));
-		self::assertNull(CachedPropertyRule::fromRule([[]]));
-		self::assertNull(CachedPropertyRule::fromRule([[null]]));
+		$this->expectExceptionObject(new InvalidArgumentException('Wrong rule set passed to constructor.'));
+		new CachedPropertyRule([null]);
+		self::assertNull(new CachedPropertyRule([[]]));
+		self::assertNull(new CachedPropertyRule([[null]]));
 	}
 
 	/**
@@ -105,35 +107,35 @@ class CachedPropertiesTraitTest extends Unit {
 	 * @covers CachedPropertyRule::isSetterAcceptable
 	 */
 	public function testCachedAttributeRule():void {
-		$rule = CachedPropertyRule::fromRule('attribute_one');
+		$rule = new CachedPropertyRule('attribute_one');
 		self::assertTrue($rule->isGetterAcceptable('attribute_one'));
 		self::assertTrue($rule->isSetterAcceptable('attribute_one'));
 		self::assertFalse($rule->isSetterAcceptable('any'));
 
-		$rule = CachedPropertyRule::fromRule([['attribute_one', 'attribute_two'], ['attribute_setter_one', 'attribute_setter_two', 'attribute_setter_three']]);
+		$rule = new CachedPropertyRule([['attribute_one', 'attribute_two'], ['attribute_setter_one', 'attribute_setter_two', 'attribute_setter_three']]);
 		self::assertTrue($rule->isGetterAcceptable('attribute_one'));
 		self::assertTrue($rule->isGetterAcceptable('attribute_two'));
 		self::assertTrue($rule->isSetterAcceptable('attribute_setter_one'));
 		self::assertTrue($rule->isSetterAcceptable('attribute_setter_two'));
 		self::assertTrue($rule->isSetterAcceptable('attribute_setter_three'));
 
-		$rule = CachedPropertyRule::fromRule(['attribute_one', true]);
+		$rule = new CachedPropertyRule(['attribute_one', true]);
 		self::assertTrue($rule->isGetterAcceptable('attribute_one'));
 		self::assertTrue($rule->isSetterAcceptable('attribute_one'));
 		self::assertTrue($rule->isSetterAcceptable('any'));
 		self::assertTrue($rule->isSetterAcceptable('whatever'));
 
-		$rule = CachedPropertyRule::fromRule(['attribute_one', false]);
+		$rule = new CachedPropertyRule(['attribute_one', false]);
 		self::assertTrue($rule->isGetterAcceptable('attribute_one'));
 		self::assertFalse($rule->isSetterAcceptable('attribute_one'));
 		self::assertFalse($rule->isSetterAcceptable('any'));
 
-		$rule = CachedPropertyRule::fromRule(['attribute_one', null]);
+		$rule = new CachedPropertyRule(['attribute_one', null]);
 		self::assertTrue($rule->isGetterAcceptable('attribute_one'));
 		self::assertTrue($rule->isSetterAcceptable('attribute_one'));
 		self::assertFalse($rule->isSetterAcceptable('any'));
 
-		$rule = CachedPropertyRule::fromRule(true);
+		$rule = new CachedPropertyRule(true);
 		self::assertTrue($rule->isGetterAcceptable('attribute_one'));
 		self::assertTrue($rule->isGetterAcceptable('attribute_two'));
 		self::assertTrue($rule->isGetterAcceptable('any'));
@@ -141,7 +143,7 @@ class CachedPropertiesTraitTest extends Unit {
 		self::assertTrue($rule->isSetterAcceptable('attribute_two'));
 		self::assertTrue($rule->isSetterAcceptable('whatever'));
 
-		$rule = CachedPropertyRule::fromRule([true, false]);
+		$rule = new CachedPropertyRule([true, false]);
 		self::assertTrue($rule->isGetterAcceptable('attribute_one'));
 		self::assertTrue($rule->isGetterAcceptable('attribute_two'));
 		self::assertTrue($rule->isGetterAcceptable('any'));
